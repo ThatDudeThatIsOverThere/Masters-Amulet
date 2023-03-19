@@ -12,7 +12,7 @@ Have the Shield Guardian target the character wearing the amulet and double clic
 
 At this point you shouldn't need to do anything but if you do need to turn the effect off temporarily, the simplest way is to switch off the bound effect with the toggle button in the combat tracker.
 
-![Screenshot of the toggle button to disable the effect in the combat tracker.](https://github.com/ThatDudeThatIsOverThere/Masters-Amulet/blob/main/Files/FGU-Effect-Toggle.png)
+![Screenshot of the toggle button to disable the effect in the combat tracker.](https://github.com/ThatDudeThatIsOverThere/File-Holder/blob/main/Readme-Images/FGU-Effect-Toggle.png)
 
 ## Installation
 
@@ -20,7 +20,7 @@ At this point you shouldn't need to do anything but if you do need to turn the e
 
 You can open the Fantasy Grounds Unity game folder by opening Fantasy Grounds Unity and clicking here. 
 
-![Screenshot of the thing you need to click in Fantasy Grounds Unity](https://github.com/ThatDudeThatIsOverThere/Masters-Amulet/blob/main/Files/FGU-Folder-Open.png)
+![Screenshot of the thing you need to click in Fantasy Grounds Unity](https://github.com/ThatDudeThatIsOverThere/File-Holder/blob/main/Readme-Images/FGU-Folder-Open.png)
 
 If you have Fantasy Grounds Unity open while placing the file, you will need to close and reopen Fantasy Grounds Unity after placing the file in order to use the extension.
 

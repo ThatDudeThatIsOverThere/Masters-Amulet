@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+	<icon name="MA_icon" file="graphics/icons/MA_icon.png" />
+	
+	<icon name="cond_guardian" file="graphics/icons/cond_guardian.png" />
+	
+	<icon name="cond_bound" file="graphics/icons/cond_bound.png" />
+
+</root>

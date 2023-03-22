@@ -42,7 +42,7 @@ function applyDamage(rSource, rTarget, rRoll)
 			nAdjustedDamage = 0;
 		end
 		
-		if (EffectManager5E.hasEffectCondition(rTarget, "Bound") and (rDamageOutput.sType == "damage")) then
+		if (EffectManager5E.hasEffectCondition(rTarget, "Bound") and (rDamageOutput.sType == "damage") and (nAdjustedDamage > 0)) then
 			for _,v in ipairs(DB.getChildList(ActorManager.getCTNode(rTarget), "effects")) do
 				local sLabel = DB.getValue(v, "label", "");
 				-- Get the source of the effect
@@ -65,6 +65,8 @@ function applyDamage(rSource, rTarget, rRoll)
 			-- Also update the sDesc to get rid of the damage type warning.
 			local sNewDesc = "";
 			
+			print("initial sDesc: " .. rRoll.sDesc);
+			
 			-- finding the start of the sections to be added to sNewDesc and adding everything before that to the base variable.
 			local sDescIndex = (tonumber((string.find(rRoll.sDesc, "TYPE")) - 3))
 			sNewDesc = (string.sub(rRoll.sDesc, 1, sDescIndex));
@@ -73,6 +75,13 @@ function applyDamage(rSource, rTarget, rRoll)
 			local countOddDamageValues = 1;
 			
 			local sNewDamageSubTotal = ""; -- Have to declare this up here to fix the nil problem
+			
+			-- Add approprite damage tags after Amulet
+			local otherTags = "";
+			-- find last instance of TYPE, then find next instance of ] from there, then grab the rest.
+			local _, typeIndex = string.find(rRoll.sDesc, ".*TYPE");			
+			local tagIndex = string.find(rRoll.sDesc, "%]", typeIndex);
+			otherTags = string.sub(rRoll.sDesc, tagIndex + 1);
 			
 			for sDamageType, sDamageDice, sDamageSubTotal in string.gmatch(rRoll.sDesc, "%[TYPE: ([^(]*) %(([%d%+%-dD]+)%=(%d+)%)%]") do
 				if(((countOddDamageValues % 2) == 1) and ((tonumber(sDamageSubTotal) % 2) == 1)) then
@@ -88,8 +97,10 @@ function applyDamage(rSource, rTarget, rRoll)
 				sNewDesc = sNewDesc .. " " .. "[TYPE: " .. sDamageType .. "(" .. sDamageDice .. " Split With Guardian =" .. tostring(sNewDamageSubTotal) .. ")]";  -- not sure if this tostring should stay. Currently nothing bad happens if nil, was breaking for me without it when nil even though it exists on 98 and 100
 			end
 			
+			print("sNewDesc: " .. sNewDesc);
 			rRoll.sDesc = sNewDesc;
-			rRoll.sDesc = rRoll.sDesc .. " [AMULET]";	
+			rRoll.sDesc = rRoll.sDesc .. " [AMULET] " .. otherTags;	
+			print("sDesc: " .. rRoll.sDesc);
 		end
 	end
 		

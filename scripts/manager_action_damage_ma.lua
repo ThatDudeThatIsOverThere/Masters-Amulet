@@ -332,7 +332,9 @@ function messageDamage(rSource, rTarget, rRoll)
 			end
 			rRoll.sResults = rRoll.sResults .. "[PARTIALLY VULNERABLE] ";
 		end
-		
+		if string.sub(rRoll.sResults, 1, 1) == " " then
+			rRoll.sResults = string.gsub(rRoll.sResults, "%s+" ,  "", 1);
+		end
 		rRoll.sResults = string.gsub(rRoll.sResults, "%]%s*%[", "] [");
 	end
 	messageDamageOriginal(rSource, rTarget, rRoll);

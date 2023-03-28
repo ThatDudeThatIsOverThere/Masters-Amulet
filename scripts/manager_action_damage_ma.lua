@@ -27,13 +27,14 @@ function applyDamage(rSource, rTarget, rRoll)
 	end
 	
 	local rDamageOutput = ActionDamage.decodeDamageText(rRoll.nTotal, rRoll.sDesc);
+	rDamageOutput.tNotifications = {};
 	if rRoll then
 		rRoll.aDamageTypes = rDamageOutput.aDamageTypes;
 	end
-	--make tNotifications into a table
-	if not rDamageOutput.tNotifications then
-		rDamageOutput.tNotifications = {};
-	end
+	-- --make tNotifications into a table
+	-- if not rDamageOutput.tNotifications then
+		-- rDamageOutput.tNotifications = {};
+	-- end
 	if (rRoll.sType == "damage") then
 		local nDamageAdjust, bVulnerable, bResist = ActionDamage.getDamageAdjust(rSource, rTarget, rDamageOutput.nVal, rDamageOutput);
 		nAdjustedDamage = rDamageOutput.nVal + nDamageAdjust;
@@ -62,34 +63,38 @@ function applyDamage(rSource, rTarget, rRoll)
 
 			--Making the math actually apply to the damage total.
 			rRoll.nTotal = nAdjustedDamage;
-			-- Also update the sDesc to get rid of the damage type warning.
-			local sNewDesc = "";
+			--Add a description to denote damage being split by the Amulet
+			table.insert(rDamageOutput.tNotifications, "[AMULET]");
+			--Update the sResults value before the results get outputted
+			rRoll.sResults = table.concat(rDamageOutput.tNotifications, " ");
+			-- -- Also update the sDesc to get rid of the damage type warning.
+			-- local sNewDesc = "";
 			
-			-- finding the start of the sections to be added to sNewDesc and adding everything before that to the base variable.
-			local sDescIndex = (tonumber((string.find(rRoll.sDesc, "TYPE")) - 3))
-			sNewDesc = (string.sub(rRoll.sDesc, 1, sDescIndex));
+			-- -- finding the start of the sections to be added to sNewDesc and adding everything before that to the base variable.
+			-- local sDescIndex = (tonumber((string.find(rRoll.sDesc, "TYPE")) - 3))
+			-- sNewDesc = (string.sub(rRoll.sDesc, 1, sDescIndex));
 			
-			-- adding a counter to swap between floor and ceil
-			local countOddDamageValues = 1;
+			-- -- adding a counter to swap between floor and ceil
+			-- local countOddDamageValues = 1;
 			
-			local sNewDamageSubTotal = ""; -- Have to declare this up here to fix the nil problem
+			-- local sNewDamageSubTotal = ""; -- Have to declare this up here to fix the nil problem
 			
-			for sDamageType, sDamageDice, sDamageSubTotal in string.gmatch(rRoll.sDesc, "%[TYPE: ([^(]*) %(([%d%+%-dD]+)%=(%d+)%)%]") do
-				if(((countOddDamageValues % 2) == 1) and ((tonumber(sDamageSubTotal) % 2) == 1)) then
-					sNewDamageSubTotal = tostring(math.floor(tonumber(sDamageSubTotal) / 2));
-					countOddDamageValues = countOddDamageValues + 1;
-				elseif(((countOddDamageValues % 2) == 0) and ((tonumber(sDamageSubTotal) % 2) == 1)) then
-					sNewDamageSubTotal = tostring(math.ceil(tonumber(sDamageSubTotal) / 2));
-					countOddDamageValues = countOddDamageValues + 1;
-				else
-					sNewDamageSubTotal = tostring(math.floor(tonumber(sDamageSubTotal) / 2));
-				end
+			-- for sDamageType, sDamageDice, sDamageSubTotal in string.gmatch(rRoll.sDesc, "%[TYPE: ([^(]*) %(([%d%+%-dD]+)%=(%d+)%)%]") do
+				-- if(((countOddDamageValues % 2) == 1) and ((tonumber(sDamageSubTotal) % 2) == 1)) then
+					-- sNewDamageSubTotal = tostring(math.floor(tonumber(sDamageSubTotal) / 2));
+					-- countOddDamageValues = countOddDamageValues + 1;
+				-- elseif(((countOddDamageValues % 2) == 0) and ((tonumber(sDamageSubTotal) % 2) == 1)) then
+					-- sNewDamageSubTotal = tostring(math.ceil(tonumber(sDamageSubTotal) / 2));
+					-- countOddDamageValues = countOddDamageValues + 1;
+				-- else
+					-- sNewDamageSubTotal = tostring(math.floor(tonumber(sDamageSubTotal) / 2));
+				-- end
 				
-				sNewDesc = sNewDesc .. " " .. "[TYPE: " .. sDamageType .. "(" .. sDamageDice .. " Split With Guardian =" .. tostring(sNewDamageSubTotal) .. ")]";  -- not sure if this tostring should stay. Currently nothing bad happens if nil, was breaking for me without it when nil even though it exists on 98 and 100
-			end
+				-- sNewDesc = sNewDesc .. " " .. "[TYPE: " .. sDamageType .. "(" .. sDamageDice .. " Split With Guardian =" .. tostring(sNewDamageSubTotal) .. ")]";  -- not sure if this tostring should stay. Currently nothing bad happens if nil, was breaking for me without it when nil even though it exists on 98 and 100
+			-- end
 			
-			rRoll.sDesc = sNewDesc;
-			rRoll.sDesc = rRoll.sDesc .. " [AMULET]";	
+			-- rRoll.sDesc = sNewDesc;
+			-- rRoll.sDesc = rRoll.sDesc .. " [AMULET]";	
 		end
 	end
 		
@@ -102,7 +107,7 @@ function applyDamage(rSource, rTarget, rRoll)
 				rGuardianRoll[key] = value;
 			end
 			rGuardianRoll.nTotal =  nAdjustedDamage + nAmuletOddCheck;
-			rGuardianRoll.sDesc = "[TYPE: amulet=" .. rGuardianRoll.nTotal .. "]";
+			--rGuardianRoll.sDesc = "[TYPE: amulet=" .. rGuardianRoll.nTotal .. "]";
 			-- Loop through the effects, looking for the bound effect being applied by a shield guardian
 			for _,v in ipairs(DB.getChildList(ActorManager.getCTNode(rTarget), "effects")) do
 				local sLabel = DB.getValue(v, "label", "");
@@ -113,8 +118,12 @@ function applyDamage(rSource, rTarget, rRoll)
 					if rEffectSource then 
 						--Make sure the source of the effect is actually a Shield Guardian
 						if (EffectManager5E.hasEffectCondition(rEffectSource, "Guardian")) then
+							--Add a description to denote damage being split by the Amulet
+							table.insert(rDamageOutput.tNotifications, "[GUARDIAN]");
+							--Update the sResults value before the results get outputted
+							rGuardianRoll.sResults = table.concat(rDamageOutput.tNotifications, " ");
 							-- Apply damage to the Guardian
-							rGuardianRoll.sDesc = rGuardianRoll.sDesc .. " [GUARDIAN]";
+							--rGuardianRoll.sDesc = rGuardianRoll.sDesc .. " [GUARDIAN]";
 							applyDamageOriginal(rSource, rEffectSource, rGuardianRoll);
 						end
 					end
@@ -126,12 +135,12 @@ function applyDamage(rSource, rTarget, rRoll)
 end
 
 function messageDamage(rSource, rTarget, rRoll)
-	if rRoll.sType == "damage" then
-		if ((string.match(rRoll.sDesc, "%[AMULET%]")) and not (string.match(rRoll.sDesc, "%[GUARDIAN%]"))) then
-			rRoll.sResults = rRoll.sResults .. "[AMULET]";
-		elseif string.match(rRoll.sDesc, "%[GUARDIAN%]") then
-			rRoll.sResults = rRoll.sResults .. "[GUARDIAN]";
-		end
-	end
+	-- if rRoll.sType == "damage" then
+		-- if ((string.match(rRoll.sDesc, "%[AMULET%]")) and not (string.match(rRoll.sDesc, "%[GUARDIAN%]"))) then
+			-- rRoll.sResults = rRoll.sResults .. "[AMULET]";
+		-- elseif string.match(rRoll.sDesc, "%[GUARDIAN%]") then
+			-- rRoll.sResults = rRoll.sResults .. "[GUARDIAN]";
+		-- end
+	-- end
 	messageDamageOriginal(rSource, rTarget, rRoll);
 end

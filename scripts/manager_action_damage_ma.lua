@@ -168,6 +168,19 @@ function applyDamage(rSource, rTarget, rRoll)
 end
 
 function getDamageAdjust(rSource, rTarget, nDamage, rDamageOutput)
+
+-- For Blissful Ignorance Compatability.
+
+	if not rTarget.tReductions then
+		rTarget.tReductions = {
+			["VULN"] = {},
+			["RESIST"] = {},
+			["IMMUNE"] = {},
+			["ABSORB"] = {},
+		};
+	end
+	
+	
 	local nDamageAdjust = 0;
 	local bVulnerable2 = false;
 	local bResist2 = false;

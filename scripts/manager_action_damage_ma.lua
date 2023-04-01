@@ -169,16 +169,11 @@ end
 
 function getDamageAdjust(rSource, rTarget, nDamage, rDamageOutput)
 
--- For Blissful Ignorance Compatability.
+-- For Blissful Ignorance Compatibility
+    if ActionDamageBI then
+        ActionDamageBI.setActiveTarget(rTarget);
+    end
 
-	if not rTarget.tReductions then
-		rTarget.tReductions = {
-			["VULN"] = {},
-			["RESIST"] = {},
-			["IMMUNE"] = {},
-			["ABSORB"] = {},
-		};
-	end
 	
 	
 	local nDamageAdjust = 0;
@@ -298,6 +293,13 @@ function getDamageAdjust(rSource, rTarget, nDamage, rDamageOutput)
 	-- Shutting these two variables down just in case
 	bResist = false;
 	bVulnerable = false;
+
+	--For Blissful Ignorance Compatibility
+	
+	if ActionDamageBI then
+        ActionDamageBI.clearActiveTarget();
+    end
+	
 	-- Results
 	return nDamageAdjust, bVulnerable, bResist, bVulnerable2, bResist2, bImmune2, nDamageTypeCount, nImmuneCount, nResistCount, nVulnerableCount;
 end

@@ -32,8 +32,8 @@ Icons made by Kael the Adventurer, based on existing icons
 
 <root release = "1.0" version = "1">
     <properties>
-        <name>Feature: Master's Amulet v1.0.3</name>
-        <version>v1.0.3</version>
+        <name>Feature: Master's Amulet v1.0.4</name>
+        <version>v1.0.4</version>
 		<loadorder>230</loadorder> 
         <author>Kael-the-Adventurer-ThatDudeOverThere-and-jeremyguebert</author>
 		<description>Adding functionality for Master's Amulet.</description>
@@ -52,6 +52,6 @@ Icons made by Kael the Adventurer, based on existing icons
 		<includefile source="graphics/icons.xml" />
     </base>
 
-    <announcement text="Master's Amulet v1.0.3 by Kael the Adventurer, ThatDudeOverThere, and jeremyguebert." icon="MA_icon" font="emotefont" />
+    <announcement text="Master's Amulet v1.0.4 by Kael the Adventurer, ThatDudeOverThere, and jeremyguebert." icon="MA_icon" font="emotefont" />
 	
 </root>
